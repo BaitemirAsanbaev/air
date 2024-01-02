@@ -29,7 +29,7 @@ CREATE TABLE Flight
     departureAirportID INT,
     arrivalAirportID   INT,
     departureDate      TIMESTAMP,
-    arrivalDate        TIMESTAMP NULL,
+    arrivalDate        TIMESTAMP,
     isArrived          BOOLEAN,
     FOREIGN KEY (airlineID) REFERENCES Airline (id),
     FOREIGN KEY (departureAirportID) REFERENCES Airport (id),
