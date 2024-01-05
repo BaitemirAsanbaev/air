@@ -48,9 +48,11 @@ CREATE TABLE Plane
 CREATE TABLE Seat
 (
     id         SERIAL PRIMARY KEY,
+    flightID   INT,
     seatNumber INT,
     class      VARCHAR(20),
-    isOccupied BOOLEAN
+    isOccupied BOOLEAN,
+    FOREIGN KEY (flightID) REFERENCES Flight (id)
 );
 
 CREATE TABLE Ticket
@@ -76,3 +78,4 @@ CREATE TABLE Employee
     airlineID   INT,
     FOREIGN KEY (airlineID) REFERENCES Airline (id)
 );
+

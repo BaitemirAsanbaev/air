@@ -1,6 +1,55 @@
 const db = require("../db");
 
 class FlightController {
+    // async createFlight(req, res) {
+    //     const {
+    //         flightNumber,
+    //         planeID,
+    //         airlineID,
+    //         departureAirportID,
+    //         arrivalAirportID,
+    //         departureDate,
+    //         arrivalDate
+    //     } = req.body;
+    //
+    //     try {
+    //         const newFlight = await db.query(
+    //             'INSERT INTO flight (flightNumber, planeID, airlineID, departureAirportID, arrivalAirportID, departureDate, arrivalDate, isArrived) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    //             [flightNumber, planeID, airlineID, departureAirportID, arrivalAirportID, departureDate, arrivalDate, false]
+    //         );
+    //
+    //         const planeTypeResult = await db.query('SELECT type FROM plane WHERE id=$1', [planeID]);
+    //         const planeType = planeTypeResult.rows[0]?.type; // Make sure you're getting the type property.
+    //
+    //         const seatsQuantity = () => {
+    //             switch (planeType) {
+    //                 case 'jambo': return { business: 200, econom: 400 };
+    //                 case 'mid-size': return { business: 100, econom: 250 };
+    //                 case 'light': return { business: 25, econom: 75 };
+    //                 default: return { business: 0, econom: 0 };
+    //             }
+    //         };
+    //
+    //         // Consider a bulk insert approach here instead of individual inserts in a loop.
+    //         const seats = [];
+    //         for (let i = 1; i <= seatsQuantity().econom; i++) {
+    //             seats.push([i, 'econom', false]);
+    //         }
+    //         for (let i = 1; i <= seatsQuantity().business; i++) {
+    //             seats.push([i, 'business', false]);
+    //         }
+    //
+    //         // Example bulk insert (syntax might vary based on your DB):
+    //         // INSERT INTO seat (seatnumber, class, isoccupied) VALUES (?, ?, ?), (?, ?, ?), ...
+    //         await db.query('INSERT INTO seat (seatnumber, class, isoccupied) VALUES ' + seats.map(() => '($1, $2, $3)').join(','), [].concat(...seats));
+    //
+    //         res.json(newFlight.rows[0]);
+    //     } catch (e) {
+    //         console.error('Error creating flight:', e);
+    //         res.status(500).json({ error: 'Internal Server Error' });
+    //     }
+    // }
+
     async createFlight(req, res) {
         const {
             flightNumber,
@@ -18,7 +67,7 @@ class FlightController {
             );
             const planeType = await db.query('SELECT * FROM plane WHERE id=$1', [planeID])
             const seatsQuantity = ()=>{
-                switch (planeType) {
+                switch (planeType.rows[0].type) {
                     case 'jambo':
                         return {
                             business:200,
@@ -41,13 +90,14 @@ class FlightController {
                         };
                 }
             }
-            for (let i = 1; i < seatsQuantity().econom; i++) {
-                db.query('INSERT INTO seat ( seatnumber, class, isoccupied) VALUES ($1, $2, $3) RETURNING *',
-                    [i, 'econom', false])
+            for (let i = 1; i <= seatsQuantity().econom; i++) {
+
+                await db.query('INSERT INTO seat ( flightid, seatnumber, class, isoccupied) VALUES ($1, $2, $3,$4) RETURNING *',
+                    [newFlight.rows[0].id, i, 'econom', false])
             }
-            for (let i = 1; i < seatsQuantity().business; i++) {
-                db.query('INSERT INTO seat ( seatnumber, class, isoccupied) VALUES ($1, $2, $3) RETURNING *',
-                    [i, 'business', false])
+            for (let i = 1; i <= seatsQuantity().business; i++) {
+                await db.query('INSERT INTO seat ( flightid, seatnumber, class, isoccupied) VALUES ($1, $2, $3, $4) RETURNING *',
+                    [newFlight.rows[0].id, i, 'business', false])
             }
 
             res.json(newFlight.rows[0]); // Assuming you want to send the inserted row back in the response
