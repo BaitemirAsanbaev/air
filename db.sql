@@ -25,6 +25,7 @@ CREATE TABLE Flight
 (
     id                 SERIAL PRIMARY KEY,
     flightNumber       VARCHAR(20) UNIQUE,
+    planeID            INT,
     airlineID          INT,
     departureAirportID INT,
     arrivalAirportID   INT,
@@ -34,6 +35,14 @@ CREATE TABLE Flight
     FOREIGN KEY (airlineID) REFERENCES Airline (id),
     FOREIGN KEY (departureAirportID) REFERENCES Airport (id),
     FOREIGN KEY (arrivalAirportID) REFERENCES Airport (id)
+);
+CREATE TABLE Plane
+(
+    id         SERIAL PRIMARY KEY,
+    name       VARCHAR(20),
+    type       VARCHAR(20),
+    airlineID  INT,
+    FOREIGN KEY (airlineID) REFERENCES Airline (id)
 );
 
 CREATE TABLE Seat
