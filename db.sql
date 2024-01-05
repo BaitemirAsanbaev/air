@@ -58,7 +58,6 @@ CREATE TABLE Seat
 CREATE TABLE Ticket
 (
     id           SERIAL PRIMARY KEY,
-    ticketNumber VARCHAR(20) UNIQUE,
     passengerID  INT,
     flightID     INT,
     seatID       INT,

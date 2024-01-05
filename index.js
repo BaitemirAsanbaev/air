@@ -5,6 +5,7 @@ const airportRouter = require('./routes/airport-routes')
 const flightRouter = require('./routes/flight-routes')
 const seatRoutes = require('./routes/seat-routes')
 const planeRoutes = require('./routes/plane-routes')
+const ticketRoutes = require('./routes/ticket-routes')
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/airport", airportRouter);
 app.use("/api/flight", flightRouter);
 app.use("/api/seat", seatRoutes);
 app.use("/api/plane", planeRoutes);
+app.use("/api/ticket", ticketRoutes);
 
 
 const PORT = process.env.PORT || 8000
