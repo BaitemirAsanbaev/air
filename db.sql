@@ -71,7 +71,6 @@ CREATE TABLE Employee
     id          SERIAL PRIMARY KEY,
     firstName   VARCHAR(50),
     lastName    VARCHAR(50),
-    dateOfBirth DATE,
     hireDate    DATE,
     salary      DECIMAL(10, 2),
     airlineID   INT,

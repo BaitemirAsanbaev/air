@@ -60,7 +60,7 @@ class PassengerController {
     async deletePassenger(req, res) {
         const id = req.params.id;
         try {
-            const passenger = await db.query(
+            await db.query(
                 'DELETE FROM passenger WHERE id=$1', [id]
             )
             res.status(200).json("passenger deleted successfully")
