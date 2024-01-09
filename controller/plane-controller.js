@@ -9,7 +9,7 @@ class PlaneController {
         }
         try {
             const newPlane = await db.query(
-                'INSERT INTO plane (name, type, airlineid) VALUES ($1, $2, $3) RETURNING *',
+                'INSERT INTO plane (name, type, "airlineID") VALUES ($1, $2, $3) RETURNING *',
                 [name, type, airlineID]
             );
             res.json(newPlane.rows[0]); // Assuming you want to send the inserted row back in the response
@@ -24,7 +24,7 @@ class PlaneController {
         const airlineID = req.params.id;
         try {
             const planes = await db.query(
-                'SELECT * FROM plane where airlineid=$1', [airlineID]
+                'SELECT * FROM plane where "airlineID"=$1', [airlineID]
             )
             res.status(200).json(planes.rows)
         } catch (e) {

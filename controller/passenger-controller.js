@@ -5,7 +5,7 @@ class PassengerController {
         const {firstName, lastName, passportNumber, contactInfo} = req.body;
         try {
             const newPassenger = await db.query(
-                'INSERT INTO passenger (FirstName, LastName, PassportNumber, ContactInfo) VALUES ($1, $2, $3, $4) RETURNING *',
+                'INSERT INTO passenger ("firstName", "lastName", "passportNumber", "contactInfo") VALUES ($1, $2, $3, $4) RETURNING *',
                 [firstName, lastName, passportNumber, contactInfo]
             );
             res.json(newPassenger.rows[0]); // Assuming you want to send the inserted row back in the response
@@ -47,7 +47,7 @@ class PassengerController {
 
         try {
             const passenger = await db.query(
-                'UPDATE passenger SET FirstName=$1, LastName=$2, PassportNumber=$3, ContactInfo=$4 WHERE id=$5 RETURNING *',
+                'UPDATE passenger SET "firstName"=$1, "lastName"=$2, "passportNumber"=$3, "contactInfo"=$4 WHERE id=$5 RETURNING *',
                 [firstName, lastName, passportNumber, contactInfo, id]
             )
             res.status(200).json(passenger.rows[0])

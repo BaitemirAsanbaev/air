@@ -13,7 +13,7 @@ class FlightController {
         } = req.body;
         try {
             const newFlight = await db.query(
-                'INSERT INTO flight (flightNumber, planeID,  airlineID, departureAirportID, arrivalAirportID, departureDate, arrivalDate, isArrived) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+                'INSERT INTO flight ("flightNumber", "planeID",  "airlineID", "departureAirportID", "arrivalAirportID", "departureDate", "arrivalDate", "isArrived") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
                 [flightNumber, planeID, airlineID, departureAirportID, arrivalAirportID, departureDate, arrivalDate, false]
             );
             const planeType = await db.query('SELECT * FROM plane WHERE id=$1', [planeID])
@@ -43,11 +43,11 @@ class FlightController {
             }
             for (let i = 1; i <= seatsQuantity().econom; i++) {
 
-                await db.query('INSERT INTO seat ( flightid, seatnumber, class, isoccupied) VALUES ($1, $2, $3,$4) RETURNING *',
+                await db.query('INSERT INTO seat ( "flightID", "seatNumber", class, "isOccupied") VALUES ($1, $2, $3,$4) RETURNING *',
                     [newFlight.rows[0].id, i, 'econom', false])
             }
             for (let i = 1; i <= seatsQuantity().business; i++) {
-                await db.query('INSERT INTO seat ( flightid, seatnumber, class, isoccupied) VALUES ($1, $2, $3, $4) RETURNING *',
+                await db.query('INSERT INTO seat ( "flightID", "seatNumber", class, "isOccupied"    ) VALUES ($1, $2, $3, $4) RETURNING *',
                     [newFlight.rows[0].id, i, 'business', false])
             }
 
@@ -62,6 +62,19 @@ class FlightController {
         try {
             const flights = await db.query(
                 'SELECT * FROM flight'
+            );
+            res.status(200).json(flights.rows);
+        } catch (e) {
+            console.error('Error getting flights:', e);
+            res.status(500).json({error: 'Internal Server Error'});
+        }
+    }
+    async getAirlineFlights(req, res) {
+        const id = req.params.id;
+
+        try {
+            const flights = await db.query(
+                'SELECT * FROM flight WHERE "airlineID"=$1',[id]
             );
             res.status(200).json(flights.rows);
         } catch (e) {
@@ -88,7 +101,7 @@ class FlightController {
 
         try {
             const flight = await db.query(
-                'UPDATE flight SET isarrived=$1 WHERE id=$2 RETURNING *', [true, id]
+                'UPDATE flight SET "isArrived"=$1 WHERE id=$2 RETURNING *', [true, id]
             );
             res.status(200).json({message: "you've arrived", flight: flight.rows[0]});
         } catch (e) {

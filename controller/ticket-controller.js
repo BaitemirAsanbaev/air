@@ -5,11 +5,11 @@ class TicketController {
         const {passengerID, flightID, seatID} = req.body;
         try {
             const newTicket = await db.query(
-                'INSERT INTO ticket (passengerid, flightid, seatid) VALUES ($1,$2,$3) RETURNING *',
+                'INSERT INTO ticket ("passengerID", "flightID", "seatID") VALUES ($1,$2,$3) RETURNING *',
                 [passengerID, flightID, seatID]
             );
             await db.query(
-                'UPDATE seat SET isoccupied=$1 WHERE id=$2', [true, seatID]
+                'UPDATE seat SET "isOccupied"=$1 WHERE id=$2', [true, seatID]
             )
             res.json(newTicket.rows[0]); // Assuming you want to send the inserted row back in the response
         } catch (e) {
@@ -23,7 +23,7 @@ class TicketController {
         const id = req.params.id;
         try {
             const tickets = await db.query(
-                'SELECT * FROM ticket WHERE flightid=$1', [id]
+                'SELECT * FROM ticket WHERE "flightID"=$1', [id]
             )
             res.status(200).json(tickets.rows)
         } catch (e) {
@@ -31,7 +31,18 @@ class TicketController {
             res.status(500).json({error: 'Internal Server Error'});
         }
     }
-
+    async getPassengerTickets(req, res) {
+        const id = req.params.id;
+        try {
+            const tickets = await db.query(
+                'SELECT * FROM ticket WHERE "passengerID"=$1', [id]
+            )
+            res.status(200).json(tickets.rows)
+        } catch (e) {
+            console.error('Error getting tickets:', e);
+            res.status(500).json({error: 'Internal Server Error'});
+        }
+    }
     async getOneTicket(req, res) {
         const id = req.params.id;
         try {

@@ -5,7 +5,7 @@ class EmployeeController {
         const {firstName, lastName, salary, airlineID} = req.body;
         try {
             const newEmployee = await db.query(
-                'INSERT INTO employee (firstname, lastname, hiredate, salary, airlineid) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+                'INSERT INTO employee ("firstName", "lastName", "hireDate", salary, "airlineID") VALUES ($1, $2, $3, $4, $5) RETURNING *',
                 [firstName, lastName, new Date(Date.now()), salary, airlineID]
             );
             res.json(newEmployee.rows[0]); // Assuming you want to send the inserted row back in the response
@@ -41,13 +41,26 @@ class EmployeeController {
         }
     }
 
+    async getAirlineEmployee(req, res) {
+        const id = req.params.id;
+        try {
+            const employee = await db.query(
+                'SELECT * FROM employee WHERE "airlineID"=$1', [id]
+            )
+            res.status(200).json(employee.rows)
+        } catch (e) {
+            console.error('Error getting employees:', e);
+            res.status(500).json({error: 'Internal Server Error'});
+        }
+    }
+
     async updateEmployee(req, res) {
         const id = req.params.id;
         const {firstName, lastName} = req.body;
 
         try {
             const employee = await db.query(
-                'UPDATE employee SET FirstName=$1, LastName=$2   WHERE id=$3 RETURNING *',
+                'UPDATE employee SET "firstName"=$1, "lastName"=$2   WHERE id=$3 RETURNING *',
                 [firstName, lastName, id]
             )
             res.status(200).json(employee.rows[0])

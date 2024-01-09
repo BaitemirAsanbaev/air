@@ -4,7 +4,7 @@ class SeatController {
     async createSeat({seatNumber, classType}) {
         try {
             await db.query(
-                'INSERT INTO seat ( seatnumber, class, isoccupied) VALUES ($1, $2, $3) RETURNING *',
+                'INSERT INTO seat ( "seatNumber", class, "isOccupied") VALUES ($1, $2, $3) RETURNING *',
                 [seatNumber, classType, false]
             );
 
@@ -26,6 +26,18 @@ class SeatController {
         }
     }
 
+    async getFlightSeat(req, res) {
+        const id = req.params.id;
+        try {
+            const seat = await db.query(
+                'SELECT * FROM seat WHERE "flightID"=$1', [id]
+            )
+            res.status(200).json(seat.rows)
+        } catch (e) {
+            console.error('Error getting seats:', e);
+            res.status(500).json({error: 'Internal Server Error'});
+        }
+    }
     async getOneSeat(req, res) {
         const id = req.params.id;
         try {
